@@ -1,6 +1,6 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from celery import Celery
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     DB_USER: str = Field(default="postgres")
     DB_PASSWORD: str = Field(default="postgres")
     DB_HOST: str = Field(default="postgres")
-    DB_PORT: int = Field(default=5432, ge=1, le=65535)  # Исправлено: было DB_HOST
+    DB_PORT: int = Field(default=5432, ge=1, le=65535)
     DB_NAME: str = Field(default="shortener_db")
 
     @property
