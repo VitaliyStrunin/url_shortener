@@ -8,7 +8,7 @@ from src.urls.infrastructure.dependencies import get_short_url_service
 
 short_urls_logger = logging.getLogger(__name__)
 
-short_urls_router = APIRouter(prefix="/url")
+short_urls_router = APIRouter()
 
 @short_urls_router.post("/shorten", response_model=ShortURLReadDTO)
 async def create_url(

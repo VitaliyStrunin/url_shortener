@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, Integer
-from pydantic import HttpUrl
-from src.core.config import CODE_LENGTH
+from src.core.config import settings
 from src.database.base import Base
 
 
@@ -13,7 +12,7 @@ class ShortURLDB(Base):
     )
     
     code: Mapped[str] = mapped_column(
-        String(CODE_LENGTH), 
+        String(settings.CODE_LENGTH), 
         nullable=False,
         unique=True, 
         index=True

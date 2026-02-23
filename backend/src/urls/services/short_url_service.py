@@ -1,7 +1,7 @@
 from src.urls.services.interfaces.short_url_repository import IShortURLRepository
 from src.urls.presentation.dtos import ShortURLCreateDTO
 from src.urls.domain.entities import ShortURL, ShortURLCreate
-from src.core.config import MAX_CODE_GENERATION_ATTEMPTS
+from src.core.config import settings
 from src.core.utils import generate_random_code, make_short_url
 from src.core.exceptions import ImpossibleToAddURL, ShortURLNotFoundByCode, ShortURLNotFoundByID
 
@@ -11,13 +11,13 @@ class ShortURLService:
         self.repository = url_repository
         
     async def create_short_url(self, url_create_dto: ShortURLCreateDTO) -> ShortURL:
-        for _ in range(MAX_CODE_GENERATION_ATTEMPTS):
+        for _ in range(settings.MAX_CODE_GENERATION_ATTEMPTS):
             random_code = generate_random_code()
             url = await self.repository.get_short_url_by_code(random_code)
             if not url:
                 break     
         else:
-            raise ImpossibleToAddURL(f"Can't create unique code after {MAX_CODE_GENERATION_ATTEMPTS} attempts")
+            raise ImpossibleToAddURL(f"Can't create unique code after {settings.MAX_CODE_GENERATION_ATTEMPTS} attempts")
         
         create_data = {
             "code": random_code,
