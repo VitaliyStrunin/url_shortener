@@ -1,11 +1,12 @@
 from sqlalchemy import update
 import logging
 import asyncio
+from sqlalchemy.ext.asyncio import create_async_engine
 
-from src.core.celery_config import celery_app
-from src.database.redis.redis import get_redis_client
-from src.database.engine import engine
+
+from src.core.celery_config import celery_app, celery_redis_client
 from src.urls.infrastructure.database.orm import ShortURLDB
+from src.core.config import settings
 
 
 
@@ -19,7 +20,8 @@ def sync_analytics_to_db():
 async def _sync_analytics_to_db():
     logger.info("Started logging analytics to databse")
     
-    redis_client = get_redis_client()
+    redis_client = celery_redis_client
+    engine = create_async_engine(settings.db_url)
     analytics_prefix = "analytics:redirects:"
     
     try:
@@ -55,7 +57,8 @@ async def _sync_analytics_to_db():
         logger.info(f"Succesfully synced {len(updates)} links")
         
     except Exception as e:
-        logger.error(f"Error during analytics sync: ", str(e))
+        logger.exception(f"Error during analytics sync")
         raise
     finally:
         await redis_client.close()
+        await engine.dispose()
