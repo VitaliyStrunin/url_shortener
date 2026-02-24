@@ -1,6 +1,8 @@
 services:
-  api:
-    build: .
+  backend:
+    build: 
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: shortener-api
     ports:
       - "8000:8000"
@@ -52,11 +54,11 @@ services:
       start_period: 10s
 
   celery_worker:
-    build: .
+    build: 
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: shortener_celery_worker
     command: uv run celery -A src.core.celery_config.celery_app worker --loglevel=info
-    volumes:
-      - .:/app
     env_file:
       - .env
     depends_on:
@@ -75,13 +77,13 @@ services:
 
 
   celery_beat:
-    build: .
+    build: 
+        context: .
+        dockerfile: backend/Dockerfile
     container_name: shortener_celery_beat
     env_file:
       - .env
     command: uv run celery -A src.core.celery_config.celery_app beat --loglevel=info --pidfile=/tmp/celery_beat.pid
-    volumes:
-      - .:/app
     depends_on:
       redis:
         condition: service_healthy
@@ -95,6 +97,17 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: url_shortener_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
 
 
 volumes:

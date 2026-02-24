@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.exceptions import ImpossibleToAddURL, ShortURLNotFoundByID, ShortURLNotFoundByCode
 from src.database.engine import engine
@@ -20,6 +21,15 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware, 
+    allow_origins=origins, 
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=True
+)
 
 app.include_router(short_urls_router)
 

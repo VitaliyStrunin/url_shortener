@@ -2,8 +2,8 @@ import redis.asyncio as redis
 import json
 
 from src.urls.services.interfaces.short_url_repository import IShortURLRepository
-from src.urls.domain.entities import ShortURL
-
+from src.urls.domain.entities import ShortURL, ShortURLCreate
+from src.urls.infrastructure.database.orm import ShortURLDB
 
 class CachingShortURLRepository(IShortURLRepository):
     def __init__(self, repo: IShortURLRepository, 
@@ -46,9 +46,18 @@ class CachingShortURLRepository(IShortURLRepository):
         await self.redis.incr(analytics_key)
         await self.redis.expire(analytics_key, 86400)
         
-    async def create_short_url(self):
-        pass
-    
+    async def create_short_url(self, short_url: ShortURLCreate) -> ShortURL:
+        url = await self.repository.create_short_url(short_url)
+        code = url.code
+        cache_key = self._get_cache_key(code)
+        
+        await self.redis.setex(
+            cache_key,
+            self.cache_ttl,
+            url.model_dump_json()
+        )
+        return url
+        
     async def delete_short_url(self, id):
         pass
     

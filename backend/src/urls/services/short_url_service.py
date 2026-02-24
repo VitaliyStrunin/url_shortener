@@ -2,7 +2,7 @@ from src.urls.services.interfaces.short_url_repository import IShortURLRepositor
 from src.urls.presentation.dtos import ShortURLCreateDTO
 from src.urls.domain.entities import ShortURL, ShortURLCreate
 from src.core.config import settings
-from src.core.utils import generate_random_code, make_short_url
+from src.core.utils import generate_random_code
 from src.core.exceptions import ImpossibleToAddURL, ShortURLNotFoundByCode, ShortURLNotFoundByID
 
 
@@ -26,7 +26,6 @@ class ShortURLService:
         
         url_create = ShortURLCreate.model_validate(create_data)
         created_url = await self.repository.create_short_url(url_create)
-        created_url.code = make_short_url(random_code)
         return created_url
         
     async def get_url_by_id(self, short_url_id: int) -> ShortURL:
