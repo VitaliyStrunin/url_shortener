@@ -4,10 +4,9 @@ import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine
 
 
-from src.core.celery_config import celery_app, celery_redis_client
+from src.core.celery_config import celery_app, celery_redis_client, celery_database_engine
 from src.urls.infrastructure.database.orm import ShortURLDB
 from src.core.config import settings
-
 
 
 logger = logging.getLogger(__name__)
@@ -21,7 +20,7 @@ async def _sync_analytics_to_db():
     logger.info("Started logging analytics to databse")
     
     redis_client = celery_redis_client
-    engine = create_async_engine(settings.db_url)
+    engine = celery_database_engine
     analytics_prefix = "analytics:redirects:"
     
     try:

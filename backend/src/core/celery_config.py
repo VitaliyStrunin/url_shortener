@@ -1,5 +1,6 @@
 from celery import Celery
 from celery.signals import worker_shutdown
+from sqlalchemy.ext.asyncio import create_async_engine
 import redis.asyncio as redis
 import asyncio
 
@@ -20,11 +21,10 @@ celery_app.conf.update(
     beat_schedule={
     "sync-analytics-every-minute": {
         "task": "sync_analytics_to_db",
-        "schedule": 60.0,
+        "schedule": 30,
         },
     },
 )
-
 
 celery_redis_client = redis.Redis.from_url(
     settings.redis_url,
@@ -32,6 +32,8 @@ celery_redis_client = redis.Redis.from_url(
     decode_responses=True,
     max_connections=5 
 )
+
+celery_database_engine = create_async_engine(settings.db_url)
 
 @worker_shutdown.connect
 def shutdown_redis(**kwargs):
