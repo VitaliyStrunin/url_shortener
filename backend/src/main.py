@@ -2,9 +2,11 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.exceptions import ImpossibleToAddURL, ShortURLNotFoundByID, ShortURLNotFoundByCode
 from src.database.engine import engine
+from src.database.redis.redis import redis_pool
 from src.database.base import Base
 from src.urls.presentation.api.routes import short_urls_router
 
@@ -15,8 +17,19 @@ async def lifespan(app: FastAPI):
         await connection.run_sync(Base.metadata.create_all)
     yield
     await engine.dispose()
+    await redis_pool.disconnect()
 
 app = FastAPI(lifespan=lifespan)
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware, 
+    allow_origins=origins, 
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=True
+)
 
 app.include_router(short_urls_router)
 
