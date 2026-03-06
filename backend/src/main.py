@@ -9,7 +9,8 @@ from src.database.engine import engine
 from src.database.redis.redis import redis_pool
 from src.database.base import Base
 from src.urls.presentation.api.routes import short_urls_router
-
+from src.urls.infrastructure.database.orm import ShortURLDB
+from src.users.infrastructure.database.orm import UserDB
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

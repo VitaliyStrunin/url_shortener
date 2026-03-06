@@ -17,7 +17,8 @@ services:
         condition: service_healthy
       celery_beat:
         condition: service_healthy
-
+    volumes:
+      - .:/app
     restart: unless-stopped
 
   postgres:

@@ -27,6 +27,13 @@ class Settings(BaseSettings):
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
 
+    @property
+    def alembic_db_url(self) -> str:
+        return (
+            f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASSWORD}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        )
+    
     REDIS_HOST: str = Field(default="redis")
     REDIS_PORT: int = Field(default=6379, ge=1, le=65535)
     REDIS_DB: int = Field(default=0, ge=0, le=15)

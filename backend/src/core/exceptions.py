@@ -12,3 +12,16 @@ class ShortURLNotFoundByCode(Exception):
     def __init__(self, code: str):
         self.message = f"URL with code {code} not found"
         super().__init__(self.message)
+    
+    
+class UserAlreadyExists(Exception):
+    def __init__(self, username: str):
+        self.message = f"User with username {username} already exists"
+        super().__init__(self.message)
+    
+    
+class UserNotFound(Exception):
+    def __init__(self, key: str):
+        self.message = f"User with username {key} already exists"
+        super().__init__(self.message)
+    

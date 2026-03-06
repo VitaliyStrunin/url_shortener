@@ -5,9 +5,15 @@ description = "Useful service for creating short urls"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "alembic>=1.18.4",
     "asyncpg>=0.31.0",
     "celery>=5.6.2",
     "fastapi[standard]>=0.129.0",
+    "locust>=2.43.3",
+    "node>=2.0.0",
+    "npm>=0.1.1",
+    "psycopg2-binary>=2.9.11",
     "redis>=7.2.0",
     "sqlalchemy>=2.0.46",
+    "vite>=1.5.2",
 ]
