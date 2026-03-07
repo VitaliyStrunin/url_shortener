@@ -1,7 +1,9 @@
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Integer
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, Integer, ForeignKey
+
 from src.core.config import settings
 from src.database.base import Base
+from src.users.infrastructure.database.orm import UserDB
 
 
 class ShortURLDB(Base):
@@ -27,4 +29,14 @@ class ShortURLDB(Base):
     redirect_amount: Mapped[int] = mapped_column(
         Integer,
         nullable=False
+    )
+    
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", on_delete="SET NULL"),
+        nullable=True
+        
+    )
+    
+    owner: Mapped["UserDB | None"] = relationship(
+        back_populates="short_urls"
     )
